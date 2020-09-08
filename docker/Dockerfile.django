@@ -1,0 +1,17 @@
+# Builds the image for the Django app.
+# The build context is the project root.
+# The working directory for the image is server/
+
+FROM python:3.8-alpine
+
+ENV PYTHONUNBUFFERED=1
+WORKDIR /app
+
+RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev postgresql-dev zlib-dev jpeg-dev
+
+RUN pip install poetry
+COPY poetry.lock pyproject.toml ./
+RUN poetry install --no-dev
+
+WORKDIR /app/server
+COPY server/ .

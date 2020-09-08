@@ -1,0 +1,11 @@
+*.log
+
+.cache/
+__pycache__/
+dist/client/*
+dist/django/*
+docker/prod.env
+node_modules/
+venv/
+
+!.gitkeep

@@ -1,0 +1,45 @@
+# The dev environment enables debugging and allows for live code changes.
+
+version: "3"
+services:
+    nginx:
+        build:
+            dockerfile: docker/Dockerfile.nginx
+            context: ..
+        environment:
+            # This fixes an issue where nginx tells django the host is "localhost" and not
+            # "localhost:8000".
+            - DJANGO_HOST=localhost:8000
+        ports:
+            - 8000:80
+        volumes:
+            - ../nginx/index.html:/var/www/html/index.html:ro
+            - ../dist/:/var/www/static/
+            - /var/CHANGEME/dev/uploads/:/var/www/static/uploads:ro
+    django:
+        build:
+            dockerfile: docker/Dockerfile.django
+            context: ..
+        command: "/bin/sh -c '\
+            poetry run ./manage.py collectstatic --no-input -v 0 && \
+            poetry run ./wait_for_postgres.py && \
+            poetry run ./manage.py runserver 0.0.0.0:80'"
+        env_file: dev.env
+        depends_on:
+            - db
+        volumes:
+            - ../dist/django/:/app/dist/
+            - ../server/:/app/server/:ro
+            - ../server/app/migrations/:/app/server/app/migrations/
+            - /var/CHANGEME/dev/uploads/:/var/uploads/
+    parcel:
+        build:
+            dockerfile: docker/Dockerfile.parcel
+            context: ..
+        command: "yarn run watch"
+        volumes:
+            - ../client/:/build/client/:ro
+            - ../dist/client/:/build/dist/
+    db:
+        image: postgres:11
+        env_file: dev.env
