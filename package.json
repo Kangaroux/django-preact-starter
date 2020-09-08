@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf dist/",
+    "build-js": "parcel build --no-source-maps --public-url /static client/src/index.tsx -o app.js",
+    "build-css": "parcel build --no-source-maps --public-url /static client/css/index.scss -o style.css",
+    "build-img": "parcel build 'client/img/**/*' -d dist/img/",
+    "build": "concurrently yarn:build-js yarn:build-css yarn:build-img",
+    "watch-js": "parcel watch --no-hmr --public-url /static client/src/index.tsx -o app.js",
+    "watch-css": "parcel watch --no-hmr --public-url /static client/css/index.scss -o style.css",
+    "watch-img": "parcel watch 'client/img/**/*' -d dist/img/",
+    "watch": "concurrently yarn:watch-js yarn:watch-css yarn:watch-img"
+  },
   "dependencies": {
     "axios": "^0.20.0",
     "mobx": "^5.15.6",

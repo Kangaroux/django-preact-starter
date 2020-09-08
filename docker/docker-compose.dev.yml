@@ -6,6 +6,7 @@ services:
         build:
             dockerfile: docker/Dockerfile.nginx
             context: ..
+        env_file: dev.env
         environment:
             # This fixes an issue where nginx tells django the host is "localhost" and not
             # "localhost:8000".

@@ -3,11 +3,6 @@
 cd ${0%/*}
 set -e
 
-args=("$@")
-cmd=${args[0]}
-
-unset args[0]
-
 function devDo() {
     docker-compose -f docker/docker-compose.dev.yml -p CHANGEME_dev "$@"
 }
@@ -53,18 +48,24 @@ function usage() {
     echo " help     display this help text."
 }
 
-case "$cmd" in
+case "$1" in
 dev)
-    cmd=${args[1]}
-    args=("${args[@]:2}")
+    shift
+    cmd=$1
+
+    if [[ $# > 0 ]]; then
+        shift
+    fi
 
     case "$cmd" in
     "" | start)
+        mkdir -p dist/client dist/django
+
         devDo up -d db
-        devDo up --build nginx django parcel
+        devDo up --build
         ;;
     run)
-        devDo run --rm django ${args[@]}
+        devDo run --rm django $@
         ;;
     clean)
         echo "Are you sure? [y/n]"
@@ -79,18 +80,18 @@ dev)
         ;;
     makemigrations)
         devDo up -d db
-        devDo run --rm django poetry run ./manage.py makemigrations ${args[@]}
+        devDo run --rm django poetry run ./manage.py makemigrations $@
         ;;
     migrate)
         devDo up -d db
         devDo run --rm django /bin/sh -c "poetry run ./wait_for_postgres.py \
-            && poetry run ./manage.py migrate ${args[@]}"
+            && poetry run ./manage.py migrate $@"
         ;;
     help | "-h" | "--help")
         devUsage
         ;;
     *)
-        echo "Unknown command '$cmd'"
+        echo "Unknown command '$1'"
         devUsage
         exit 1
         ;;
@@ -98,11 +99,16 @@ dev)
     ;;
 
 prod)
-    cmd=${args[1]}
-    args=("${args[@]:2}")
+    shift
+    cmd=$1
 
-    case "$cmd" in
+    if [[ $# > 0 ]]; then
+        shift
+    fi
+
+    case "$1" in
     "" | start)
+        mkdir -p dist/client dist/server
         prodDo up -d db django nginx
         ;;
     build)
@@ -131,10 +137,10 @@ prod)
         prodDo up -d db
 
         prodDo run --rm django /bin/sh -c "poetry run ./wait_for_postgres.py \
-            && poetry run ./manage.py migrate ${args[@]}"
+            && poetry run ./manage.py migrate $@"
         ;;
     run)
-        prodDo run --rm django ${args[@]}
+        prodDo run --rm django $@
         ;;
     stop)
         prodDo stop
@@ -143,7 +149,7 @@ prod)
         prodUsage
         ;;
     *)
-        echo "Unknown command '$cmd'"
+        echo "Unknown command '$1'"
         prodUsage
         exit 1
         ;;
@@ -153,7 +159,7 @@ prod)
     usage
     ;;
 *)
-    echo "Unknown command '$cmd'"
+    echo "Unknown command '$1'"
     usage
     exit 1
     ;;
