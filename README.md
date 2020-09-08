@@ -14,6 +14,8 @@ The project includes a `tasks.sh` script to help with a lot of common tasks.
 - nginx
 
 ## Quickstart
+Search the repo for the text **CHANGEME** and modify as needed.
+
 For development:
 
 ```bash

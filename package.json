@@ -1,7 +1,5 @@
 {
-  "name": "changeme",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "CHANGEME",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf dist/",
