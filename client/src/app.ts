@@ -16,7 +16,7 @@ const api: API = {
 
 Promise.all([
     // TODO: Do initial data loading here.
-    // api.example.list().then(items => store.addExampleItems(items)),
+    api.example.list().then(items => store.addExampleItems(items)),
 ]).then(() => store.setAsReady());
 
 

@@ -7,8 +7,9 @@ import { Example } from "../models";
 function serialize(data: any): Example {
     return {
         id: data.id,
-        data1: data.data1,
-        data2: data.data2
+        created_at: new Date(data.created_at),
+        updated_at: new Date(data.updated_at),
+        message: data.message,
     };
 }
 

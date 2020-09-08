@@ -1,8 +1,11 @@
 /**
- * An example model.
+ * The base model.
  */
-export interface Example {
+export interface Base {
     id: number;
-    data1: string;
-    data2: string;
+    created_at: Date;
+    updated_at: Date;
+    message: string;
 }
+
+export interface Example extends Base { };
