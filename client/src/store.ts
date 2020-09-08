@@ -1,11 +1,14 @@
 import { action, observable } from "mobx";
 
+import { Example } from "./models";
+
 
 /**
  * The structure of the data store.
  */
 export interface IStoreData {
     ready: boolean;
+    exampleItems: Example[];
 }
 
 /**
@@ -17,7 +20,13 @@ export class Store {
     constructor() {
         this.data = observable({
             ready: false,
+            exampleItems: [],
         });
+    }
+
+    @action.bound
+    addExampleItems(items: Example[]) {
+        this.data.exampleItems = this.data.exampleItems.concat(items);
     }
 
     @action.bound
